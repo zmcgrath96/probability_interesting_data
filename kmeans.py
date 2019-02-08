@@ -27,17 +27,22 @@ def closestByIndex(x, y):
 # x is data, y are centers
 def findCenters(x, y, closest):
     newCenters = [[0 for _ in range(len(x[0]))] for _ in range(len(y))]
-    print(closest)
-    sums = [[] for _ in range(len(y))]
-    for i in range(len(x)):
-        sums[closest[i]].append(data[i])
-    for i in range(len(y)):
-        for j in range(len(x))
-            newCenters = np.where(data[j] == y[i])
-        newCenters[i] = x[i == closest].mean(0)
-        print(.s_newCenters[i])
 
-    newCenters = np.array(newCenters)
+    sorted = [[] for _ in range(len(y))]
+    for i in range(len(x)):
+        sorted[closest[i]].append(x[i])
+
+    means = [[0 for _ in range(len(x[0]))] for _ in range(len(y))]
+    for i in range(len(sorted)):
+        count = 0
+        for j in range(len(sorted[i])):
+            count = count + 1
+            for k in range(len(sorted[i][j])):
+                means[i][k] += sorted[i][j][k]
+        for j in range(len(means[i])):
+            means[i][j] = means[i][j] / count
+
+    newCenters = np.array(means)
     return newCenters
 
 # function to randomize initial centers
@@ -57,12 +62,11 @@ def init_centers(data, clusters):
 # main function that heads k_means
 def k_means(data, clusters):
     centers = init_centers(data, clusters)
-    closestIndex = closestByIndex(data, centers)
-    newCenters = findCenters(data, centers, closestIndex)
-    # if np.all(centers == newCenters):
-    #     break
-    centers = newCenters
-    print(len(centers[0]))
-    print(centers)
+    while True:
+        closestIndex = closestByIndex(data, centers)
+        newCenters = findCenters(data, centers, closestIndex)
+        if np.all(centers == newCenters):
+            break
+        centers = newCenters
 
     return centers, closestIndex

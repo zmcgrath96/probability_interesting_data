@@ -1,6 +1,7 @@
 import numpy as np
 import sys
 import kmeans as km
+import matplotlib.pyplot as plt
 
 def main(args):
     # make sure data set passed in
@@ -21,7 +22,10 @@ def main(args):
     if not args[2] or not 'em' in args[2]:
         if args[2] and int(args[2]):
             clusters = int(args[2])
-        km.k_means(data, clusters)
+        centers, index = km.k_means(data, clusters)
+        plt.scatter(data[:, 0], data[:, 1], c=index,
+            s=50, cmap='viridis');
+        plt.show();
 
 
 if __name__ == '__main__':
