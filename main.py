@@ -23,11 +23,18 @@ def main(args):
 
     discrete_col = np.genfromtxt(input_file, delimiter=',', skip_header=1, usecols=discrete_column_number, dtype=str)
     discrete_vals = {}
-    for a in discrete_col:
-        if a not in discrete_vals:
-            discrete_vals[a] = 1
+    # keep track of row number where each discrete value was found
+    for i in range(len(discrete_col)):
+        val = discrete_col[i]
+        if val not in discrete_vals:
+            discrete_vals[val] = []
+            discrete_vals[val].append(i)
+        else:
+            discrete_vals[val].append(i)
 
     num_discrete = len(discrete_vals)
+    print(num_discrete)
+    return
 
     # TODO: parameterize later
     data = np.delete(data, np.s_[0:2], 1)
