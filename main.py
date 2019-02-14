@@ -5,15 +5,20 @@ import matplotlib.pyplot as plt
 
 def main(args):
     discrete_column_number = 0
-    
+
     # make sure data set passed in
     if not args[1] or 'csv' not in args[1]:
         print('Error: no data csv passed in. Maker sure data is in csv format')
     input_file = args[1]
-    data = np.genfromtxt(input_file, delimiter=',', skip_header=1, dtype=float)
+    def convertDiag(x):
+        if x == 'B':
+            return 0.0
+        else:
+            return 1.0
+    data = np.genfromtxt(input_file, delimiter=',', skip_header=1, dtype=float, converters={1: convertDiag})
 
     # determine the number of discrete values there are for the number of clusters
-    if args[2]: 
+    if args[2]:
         discrete_column_number = int(args[2])
 
     discrete_col = np.genfromtxt(input_file, delimiter=',', skip_header=1, usecols=discrete_column_number, dtype=str)
