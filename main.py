@@ -47,7 +47,9 @@ def main(args):
         plt.show()
 
     else:
-        em.em(data, clusters)
+        pdfs = em.em(data[0], clusters)
+        print(pdfs)
+        plt.plot(data[:, 0], pdf[0])
 
 
 if __name__ == '__main__':
