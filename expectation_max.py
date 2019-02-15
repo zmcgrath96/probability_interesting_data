@@ -76,11 +76,12 @@ def em(dataset, clusters, tol=0.01, max_iter=1000):
             z = 0
             for j in range(len(dataset)):
                 z+= pis[i] * multivariate_normal(mus[i], sigmas[i]).pdf(dataset[j])
-            #ll_new += np.log(z)
+            ll_new += np.log(z)
         if abs(ll_new - ll_old) < tol:
             break
         ll_old = ll_new
         iterations += 1
+        print(iterations)
     pdfs = np.empty((clusters, len(dataset)))
     for i in range(clusters):
         pdfs[i] = multivariate_normal.pdf(dataset, mean=mus[i], cov=sigmas[i])
