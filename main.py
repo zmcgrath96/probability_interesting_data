@@ -3,6 +3,7 @@ import sys
 import kmeans as km
 import expectation_max as em
 import matplotlib.pyplot as plt
+import scipy.stats as ss
 
 def main(args):
     discrete_column_number = 0
@@ -47,10 +48,10 @@ def main(args):
         plt.show()
 
     else:
-        mus, sigmas = em.em(data[0], clusters)
-        print("mus: {}".format(mus))
-        print("sigmas: {}".format(sigmas))
-        #plt.plot(data[:, 0], pdfs[0])
+        pdfs = em.em(data[:, 0], clusters)
+        for i in range(len(pdfs)):
+            plt.plot(data[:,0], pdfs[i])
+        plt.show()
 
 
 if __name__ == '__main__':
