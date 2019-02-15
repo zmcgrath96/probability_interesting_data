@@ -47,9 +47,10 @@ def main(args):
         plt.show()
 
     else:
-        pdfs = em.em(data[0], clusters)
-        print(pdfs)
-        plt.plot(data[:, 0], pdf[0])
+        mus, sigmas = em.em(data[0], clusters)
+        print("mus: {}".format(mus))
+        print("sigmas: {}".format(sigmas))
+        #plt.plot(data[:, 0], pdfs[0])
 
 
 if __name__ == '__main__':

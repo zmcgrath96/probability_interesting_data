@@ -17,12 +17,15 @@ def em(dataset, clusters, tol=0.01, max_iter=10000000):
     # parameter means
     mus = [1 for _ in range(clusters)]
     mus = np.array(mus)
+    mus = np.random.random(clusters)
 
     # covariance
     sigmas = [1 for _ in range(clusters)]
     sigmas = np.array(sigmas)
+    sigmas = np.random.random(clusters)
 
-
+    print(mus)
+    print(sigmas)
     # likelihood variables
     ll_old = 0.0
     ll_new = 1.0
@@ -36,9 +39,12 @@ def em(dataset, clusters, tol=0.01, max_iter=10000000):
         r_ic = np.zeros((len(dataset), clusters))
 
         for i in range(len(dataset)):
+            sum = 0
             for j in range(clusters):
                 r_ic[i, j] = pis[j] * multivariate_normal(mus[j], sigmas[j]).pdf(dataset[i])
-
+                sum += r_ic[i, j]
+            r_ic[i] /= sum
+            
         # M Step
         # compute m_c
         m_c = np.zeros(clusters)
@@ -57,10 +63,13 @@ def em(dataset, clusters, tol=0.01, max_iter=10000000):
         for i in range(clusters):
             temp = np.zeros(clusters)
             for j in range(len(dataset)):
-                xMinusMu = dataset[j] - mus[i]
-                temp[i] += r_ic[j, i] * np.dot(np.atleast_2d(xMinusMu).T, np.atleast_2d(xMinusMu)).flatten()[0]
-            sigmas[i] = 1/m_c[i] * temp[i]
-
+                xMinusMu = dataset[j] - mus
+                #print("x-mu: {}".format(xMinusMu))
+                #print("x-mu dot: {}".format(np.dot((xMinusMu).T, (xMinusMu))))
+                temp[i] += r_ic[j, i] * np.dot((xMinusMu).T, (xMinusMu))
+            sigmas[i] = (1/m_c[i]) * temp[i]
+        #print("sigmas: {}".format(sigmas))
+        # compute new likelyhood
         ll_new = 0.0
         for i in range(clusters):
             z = 0
@@ -71,4 +80,4 @@ def em(dataset, clusters, tol=0.01, max_iter=10000000):
             break
         ll_old = ll_new
         iterations += 1
-    return [ss.norm.pdf(dataset, mus[i], sigmas[i]) for i in range(clusters)]
+    return mus, sigmas
