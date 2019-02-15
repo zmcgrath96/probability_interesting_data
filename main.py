@@ -10,12 +10,8 @@ def main(args):
     if not args[1] or 'csv' not in args[1]:
         print('Error: no data csv passed in. Maker sure data is in csv format')
     input_file = args[1]
-    def convertDiag(x):
-        if x == 'B':
-            return 0.0
-        else:
-            return 1.0
-    data = np.genfromtxt(input_file, delimiter=',', skip_header=1, dtype=float, converters={1: convertDiag})
+    
+    data = np.genfromtxt(input_file, delimiter=',', skip_header=1, dtype=float)
 
     # determine the number of discrete values there are for the number of clusters
     if args[2]:
