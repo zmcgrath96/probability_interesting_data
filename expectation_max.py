@@ -24,7 +24,7 @@ def em(dataset, clusters, tol=0.01, max_iter=1):
 
 
     # likelihood variables
-    ll_old = 0.0
+    ll_old = 1
     ll_new = 0.0
 
 
@@ -33,10 +33,12 @@ def em(dataset, clusters, tol=0.01, max_iter=1):
 
         # E Step
         # r is probablity that a point belongs to a cluster
-        r_ic = np.zeros((len(dataset)), clusters)
+        r_ic = np.zeros((len(dataset), clusters))
+
         for i in range(len(mus)):
             for j in range(len(dataset)):
-                r_ic[j][i] = pis[i] * multivariate_normal(mus[i], sigmas[i]).pdf(dataset[j])
+                print(pis[i] * multivariate_normal(mus[i], sigmas[i]).pdf(dataset[j]))
+                r_ic[i, j] = pis[i] * multivariate_normal(mus[i], sigmas[i]).pdf(dataset[j])
 
         print(r_ic)
 
