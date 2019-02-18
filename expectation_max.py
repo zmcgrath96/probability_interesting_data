@@ -9,7 +9,7 @@ def em(dataset, clusters, tol=0.01, max_iter=1000):
         print('No clusters')
         return
 
-    # change dataset to numpy array for consistency 
+    # change dataset to numpy array for consistency
     data = np.array(dataset)
     length, width = data.shape
 
@@ -69,17 +69,17 @@ def em(dataset, clusters, tol=0.01, max_iter=1000):
         z = 0
         for i in range(length):
             for j in range(clusters):
-                print('pi: {} \t mu: {} \t sigma: {} \t data: {}'.format(pis[j], mus[j], sigmas[j], data[i]))
+                #print('pi: {} \t mu: {} \t sigma: {} \t data: {}'.format(pis[j], mus[j], sigmas[j], data[i]))
                 z+= pis[j] * multivariate_normal(mus[j], sigmas[j], allow_singular=True).pdf(data[i])
             ll_new += np.log(z)
-        print('z: {}'.format(z))
-        print('ll_new: {}'.format(ll_new))
+        # print('z: {}'.format(z))
+        # print('ll_new: {}'.format(ll_new))
 
         if abs(ll_new - ll_old) < tol:
             break
         ll_old = ll_new
         iterations += 1
-        print(iterations)
+        # print(iterations)
     pdfs = np.empty((clusters, length))
     for i in range(clusters):
         pdfs[i] = multivariate_normal.pdf(data, mean=mus[i], cov=sigmas[i], allow_singular=True)

@@ -40,7 +40,8 @@ def findCenters(x, y, closest):
             for k in range(len(sorted[i][j])):
                 means[i][k] += sorted[i][j][k]
         for j in range(len(means[i])):
-            means[i][j] = means[i][j] / count
+            if (count != 0):
+                means[i][j] = means[i][j] / count
 
     newCenters = np.array(means)
     return newCenters

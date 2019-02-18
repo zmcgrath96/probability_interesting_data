@@ -5,6 +5,7 @@ import expectation_max as em
 import matplotlib.pyplot as plt
 import scipy.stats as ss
 import traceback
+import seaborn as sns
 
 def main(args):
     discrete_column_number = 0
@@ -52,11 +53,11 @@ def main(args):
 
     # cluster number AKA number of discrete values
     clusters = num_discrete
-    
+
     # get axis labels
     with open(input_file) as inf:
         line = inf.readline()
-    
+
     line = line.split(',')
     lbl_one = line[col_one].replace('"', '')
     lbl_two = line[col_two].replace('"', '')
@@ -64,9 +65,17 @@ def main(args):
     # check for model type
     args_len = len(args)
     if args_len >= 6:
+        min1 = min(data[:,0])
+        min2 = min(data[:,1])
+        min0 = min1 if min1 < min2 else min2
+        max1 = max(data[:,0])
+        max2 = max(data[:,1])
+        max0 = max1 if max1 > max2 else max2
+        x = np.linspace(min0, max0, len(data))
         pdfs = em.em(data, clusters)
-        for i in range(len(pdfs)):
-            plt.plot(data[:,0], pdfs[i])
+        sns.distplot(data, bins=20, kde=False, norm_hist=True, color=['b', 'r'])
+        for pdf in pdfs:
+            plt.plot(x, pdf, label="pdf")
         plt.show()
     else:
         centers, index = km.k_means(data, clusters)
