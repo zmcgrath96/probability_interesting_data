@@ -14,8 +14,11 @@ The environment used was Python 3.7
 
 ### Installation
 
-Pull the repo
-
+Clone the repo
+```
+%> git clone https://github.com/zmcgrath96/probability_interesting_data
+```
+Install necessary libraries
 ```
 %probably_interesting_data> pip3 install -r requirements.txt
 ```
