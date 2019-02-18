@@ -14,7 +14,7 @@ def em(dataset, clusters, tol=0.01, max_iter=1000):
     length, width = data.shape
 
     # weight for each point to each cluster, initialized to random ints
-    pis = np.random.randint(0,1,size=(clusters))
+    pis = np.random.randint(min(data[:,0]), max(data[:,0]),size=(clusters))
 
     # parameter means, initialized to random integers
     mus = np.random.randint(min(data[:,0]), max(data[:,0]),size=(clusters, width))
@@ -36,17 +36,16 @@ def em(dataset, clusters, tol=0.01, max_iter=1000):
 
         for i in range(len(mus)):
             for j in range(length):
-                print('sigma: {} '.format(sigmas[i]))
-                r_ic[i, j] = pis[i] * multivariate_normal(mus[i], sigmas[i]).pdf(data[j])
+                r_ic[j, i] = pis[i] * multivariate_normal(mus[i], sigmas[i], allow_singular=True).pdf(data[j])
         # normalize the weights
-        r_ic /= r_ic.sum(0)
+        r_ic /= r_ic.sum(axis=0)
 
         # M Step
         # compute news pis
         pis = np.zeros(clusters)
         for i in range(len(mus)):
             for j in range(length):
-                pis[i] += r_ic[i, j]
+                pis[i] += r_ic[j, i]
         # normalize to the size of the dataset
         pis /= length
 
@@ -54,7 +53,7 @@ def em(dataset, clusters, tol=0.01, max_iter=1000):
         mus = np.zeros((clusters, width))
         for i in range(clusters):
             for j in range(length):
-                mus[i] += (r_ic[i, j] * data[j])
+                mus[i] += (r_ic[j, i] * data[j])
             mus[i] = r_ic[i, :].sum()
 
         #computes new sigmas
@@ -62,7 +61,7 @@ def em(dataset, clusters, tol=0.01, max_iter=1000):
         for i in range(clusters):
             for j in range(length):
                 xMinusMu = np.reshape(data[i] - mus[i], (2, 1))
-                sigmas[i] += r_ic[i, j] * np.dot(xMinusMu, xMinusMu.T)
+                sigmas[i] += r_ic[j, i] * np.dot(xMinusMu, xMinusMu.T)
             sigmas[i] /= r_ic[i,:].sum()
 
         # compute new likelihood
@@ -70,7 +69,8 @@ def em(dataset, clusters, tol=0.01, max_iter=1000):
         z = 0
         for i in range(length):
             for j in range(clusters):
-                z+= pis[j] * multivariate_normal(mus[j], sigmas[j]).pdf(data[i])
+                print('pi: {} \t mu: {} \t sigma: {} \t data: {}'.format(pis[j], mus[j], sigmas[j], data[i]))
+                z+= pis[j] * multivariate_normal(mus[j], sigmas[j], allow_singular=True).pdf(data[i])
             ll_new += np.log(z)
         print('z: {}'.format(z))
         print('ll_new: {}'.format(ll_new))
@@ -82,5 +82,5 @@ def em(dataset, clusters, tol=0.01, max_iter=1000):
         print(iterations)
     pdfs = np.empty((clusters, length))
     for i in range(clusters):
-        pdfs[i] = multivariate_normal.pdf(data, mean=mus[i], cov=sigmas[i])
+        pdfs[i] = multivariate_normal.pdf(data, mean=mus[i], cov=sigmas[i], allow_singular=True)
     return pdfs

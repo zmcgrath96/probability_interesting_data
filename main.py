@@ -54,21 +54,18 @@ def main(args):
     clusters = num_discrete
 
     # check for model type
-    try:
-        is_em = args[5]
+    args_len = len(args)
+    if args_len >= 6:
         pdfs = em.em(data, clusters)
         for i in range(len(pdfs)):
             plt.plot(data[:,0], pdfs[i])
         plt.show()
-    except IndexError:
+    else:
+        print('GOING TO KMEANS')
         centers, index = km.k_means(data, clusters)
         plt.scatter(data[:, 0], data[:, 1], c=index,
             s=50, cmap='viridis')
         plt.show()
-    except Exception as e:
-        print(e)
-        traceback.print_exc()
-       
 
 
 if __name__ == '__main__':
