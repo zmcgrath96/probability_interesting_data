@@ -8,20 +8,23 @@ def em(dataset, clusters, tol=0.01, max_iter=1000):
     if clusters is None:
         print('No clusters')
         return
-    # weight for each point to each cluster
-    pis = [1/float(clusters) for _ in range(clusters)]
-    pis = np.array(pis)
 
-    # parameter means
-    mus = np.random.random(clusters)
+    # change dataset to numpy array for consistency 
+    data = np.array(dataset)
+    length, width = data.shape
 
-    # covariance
-    sigmas = np.random.random(clusters)
+    # weight for each point to each cluster, initialized to random ints
+    pis = np.random.randint(0,1,size=(clusters))
 
+    # parameter means, initialized to random integers
+    mus = np.random.randint(min(data[:,0]), max(data[:,0]),size=(clusters, width))
+
+    # covariance, initialized to diag of 1s
+    sigmas = np.zeros((clusters, width, width))
+    np.fill_diagonal(sigmas, 1)
     # likelihood variables
     ll_old = 0.0
-    ll_new = 1.0
-
+    ll_new = 0.0
 
     iterations = 0
     while(iterations < max_iter):
@@ -30,52 +33,46 @@ def em(dataset, clusters, tol=0.01, max_iter=1000):
         # r is probablity that a point belongs to a cluster
         r_ic = np.zeros((len(dataset), clusters))
 
-        for i in range(len(dataset)):
-            sum = 0
-            for j in range(clusters):
-                r_ic[i, j] = pis[j] * multivariate_normal(mus[j], sigmas[j]).pdf(dataset[i])
-                sum += r_ic[i, j]
-            if sum != 0:
-                r_ic[i] /= sum
+        for i in range(len(mus)):
+            for j in range(length):
+                r_ic[i, j] = pis[i] * multivariate_normal(mus[i], sigmas[i]).pdf(dataset[j])
+        # normalize the weights
+        r_ic /= r_ic.sum(0)
 
         # M Step
-        # compute m_c
-        m_c = np.zeros(clusters)
-        for i in range(len(m_c)):
-            sum = 0
-            for j in range(len(dataset)):
-                sum += r_ic[j, i]
-            m_c[i] = sum
-
         # compute news pis
-        for i in range(clusters):
-            pis[i] = m_c[i] / np.sum(m_c)
+        pis = np.zeros(clusters)
+        for i in range(len(mus)):
+            for j in range(length):
+                pis[i] += r_ic[i, j]
+        # normalize to the size of the dataset
+        pis /= length
 
         #compute new mus
+        mus = np.zeros((clusters, width))
         for i in range(clusters):
-            sum = 0
-            for j in range(len(dataset)):
-                sum += (r_ic[j, i] * dataset[i])
-            mus[i] = (1 / mus[i]) * sum
+            for j in range(length):
+                mus[i] += (r_ic[i, j] * dataset[j])
+            mus[i] = r_ic[i, :].sum()
 
         #computes new sigmas
+        sigmas = np.zeros((clusters, width, width))
         for i in range(clusters):
-            xMinusMu = dataset - mus[i]
-            r_ic_temp = np.array(r_ic[:,i]).reshape(len(dataset), 1)
-            xMinusMuTransposed = xMinusMu.T
-            r_ic_temp *= np.dot(xMinusMuTransposed, xMinusMu)
-            sigmas[i] = (1/m_c[i]) * np.sum(r_ic_temp)
+            for j in range(length):
+                xMinusMu = np.reshape(data[i] - mus[i], (2, 1))
+                sigmas[i] += r_ic[i, j] * np.dot(xMinusMu, xMinusMu.T)
+            sigmas[i] /= r_ic[i,:].sum()
 
-
-        #print("sigmas: {}".format(sigmas))
-
-        # compute new likelyhood
+        # compute new likelihood
         ll_new = 0.0
-        for i in range(clusters):
-            z = 0
-            for j in range(len(dataset)):
-                z+= pis[i] * multivariate_normal(mus[i], sigmas[i]).pdf(dataset[j])
+        z = 0
+        for i in range(length):
+            for j in range(clusters):
+                z+= pis[j] * multivariate_normal(mus[j], sigmas[j]).pdf(data[i])
             ll_new += np.log(z)
+        print('z: {}'.format(z))
+        print('ll_new: {}'.format(ll_new))
+
         if abs(ll_new - ll_old) < tol:
             break
         ll_old = ll_new
