@@ -4,6 +4,7 @@ import kmeans as km
 import expectation_max as em
 import matplotlib.pyplot as plt
 import scipy.stats as ss
+import traceback
 
 def main(args):
     discrete_column_number = 0
@@ -36,13 +37,12 @@ def main(args):
 
     num_discrete = len(discrete_vals)
 
-    # TODO: parameterize later
+    # get the two desire columns
     col_one = 0
     col_two = 0
     try:
         col_one = int(args[3])
         col_two = int(args[4]) - 1
-        print('col 1: {} \t col 2: {}'.format(col_one, col_two))
     except Exception:
         print("Error: need 2 columns of wanted data (0 based, lower first)")
         return
@@ -56,15 +56,18 @@ def main(args):
     # check for model type
     try:
         is_em = args[5]
-        pdfs = em.em(data[:, 0], clusters)
+        pdfs = em.em(data, clusters)
         for i in range(len(pdfs)):
             plt.plot(data[:,0], pdfs[i])
         plt.show()
-    except Exception:
+    except IndexError:
         centers, index = km.k_means(data, clusters)
         plt.scatter(data[:, 0], data[:, 1], c=index,
             s=50, cmap='viridis')
         plt.show()
+    except Exception as e:
+        print(e)
+        traceback.print_exc()
        
 
 

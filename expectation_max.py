@@ -21,7 +21,8 @@ def em(dataset, clusters, tol=0.01, max_iter=1000):
 
     # covariance, initialized to diag of 1s
     sigmas = np.zeros((clusters, width, width))
-    np.fill_diagonal(sigmas, 1)
+    for sig in sigmas:
+        np.fill_diagonal(sig, 1)
     # likelihood variables
     ll_old = 0.0
     ll_new = 0.0
@@ -31,11 +32,12 @@ def em(dataset, clusters, tol=0.01, max_iter=1000):
 
         # E Step
         # r is probablity that a point belongs to a cluster
-        r_ic = np.zeros((len(dataset), clusters))
+        r_ic = np.zeros((length, clusters))
 
         for i in range(len(mus)):
             for j in range(length):
-                r_ic[i, j] = pis[i] * multivariate_normal(mus[i], sigmas[i]).pdf(dataset[j])
+                print('sigma: {} '.format(sigmas[i]))
+                r_ic[i, j] = pis[i] * multivariate_normal(mus[i], sigmas[i]).pdf(data[j])
         # normalize the weights
         r_ic /= r_ic.sum(0)
 
@@ -52,7 +54,7 @@ def em(dataset, clusters, tol=0.01, max_iter=1000):
         mus = np.zeros((clusters, width))
         for i in range(clusters):
             for j in range(length):
-                mus[i] += (r_ic[i, j] * dataset[j])
+                mus[i] += (r_ic[i, j] * data[j])
             mus[i] = r_ic[i, :].sum()
 
         #computes new sigmas
@@ -78,7 +80,7 @@ def em(dataset, clusters, tol=0.01, max_iter=1000):
         ll_old = ll_new
         iterations += 1
         print(iterations)
-    pdfs = np.empty((clusters, len(dataset)))
+    pdfs = np.empty((clusters, length))
     for i in range(clusters):
-        pdfs[i] = multivariate_normal.pdf(dataset, mean=mus[i], cov=sigmas[i])
+        pdfs[i] = multivariate_normal.pdf(data, mean=mus[i], cov=sigmas[i])
     return pdfs
