@@ -48,7 +48,7 @@ def main(args):
         print("Error: need 2 columns of wanted data (0 based, lower first)")
         return
     data = np.delete(data, np.s_[0:col_one], 1)
-    data = np.delete(data, np.s_[1:col_two], 1)
+    data = np.delete(data, np.s_[1:col_two - col_one], 1)
     data = np.delete(data, np.s_[2:len(data)], 1)
 
     # cluster number AKA number of discrete values
