@@ -1,6 +1,5 @@
 import numpy as np
 from scipy.stats import multivariate_normal
-import scipy.stats as ss
 
 def em(dataset, clusters, tol=0.01, max_iter=1000):
     if dataset is None:
