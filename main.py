@@ -52,6 +52,14 @@ def main(args):
 
     # cluster number AKA number of discrete values
     clusters = num_discrete
+    
+    # get axis labels
+    with open(input_file) as inf:
+        line = inf.readline()
+    
+    line = line.split(',')
+    lbl_one = line[col_one].replace('"', '')
+    lbl_two = line[col_two].replace('"', '')
 
     # check for model type
     args_len = len(args)
@@ -61,10 +69,11 @@ def main(args):
             plt.plot(data[:,0], pdfs[i])
         plt.show()
     else:
-        print('GOING TO KMEANS')
         centers, index = km.k_means(data, clusters)
         plt.scatter(data[:, 0], data[:, 1], c=index,
             s=50, cmap='viridis')
+        plt.xlabel(lbl_one)
+        plt.ylabel(lbl_two)
         plt.show()
 
 
