@@ -65,16 +65,15 @@ with belonging to some sort of category, a relationtionship between the variable
 
 ### Process
 The process for this project was fairly straight forward:
-	1. Create an outward facing function responsible for seperating the columns and only getting data wanted
-	2. Write a function for our model (K-Means for our case)
-	3. Ensure that the functions themselves we're not hardcoded for any type of dataset, but rather parameterized
-	   and abstract enough to be used with any type of categorial, relational dataset
+1. Create an outward facing function responsible for seperating the columns and only getting wanted data.
+2. Write a function for our model (K-Means for our case).
+3. Ensure that the functions themselves we're not hardcoded for any type of dataset, but rather parameterized and abstract enough to be used with any type of categorial, relational dataset.
 
-	Although we had an overall understanding of the algorithm at a high level, implementation details were the 
-	primary roadblocks in this project. Due to this, we referenced https://jakevdp.github.io/PythonDataScienceHandbook/05.11-k-means.html
-	for help when encountering such a situation
+Although we had an overall understanding of the algorithm at a high level, implementation details were the 
+primary roadblocks in this project. Due to this, we referenced https://jakevdp.github.io/PythonDataScienceHandbook/05.11-k-means.html
+for help when encountering such a situation
 
-	The number of clusters to use was determined by the number of categories found in the categorical column
+The number of clusters to use was determined by the number of categories found in the categorical column
 
 ### Results
 
@@ -89,3 +88,13 @@ dataset instead of many smaller ones
 This dataset is a 'classic' dataset. The data associated with each category lend themselves well to very clear clusters.
 Because of this, the results, when plotted on a scatterplot and colored, reveal exactly what one would expect: 3 clear clusters 
 for just about every combination of two columns
+
+### Gaussian Mixiture Model
+Once we had completed most of the K-Means implementation, we decided to also attempt to implement a Gaussian mixture model through the
+Expectation-Maximization method. This type of implementation was significantly more difficult than the k-Means and unfortunately it 
+does not yield accurate results. We left the Gaussian code in place in case you want to peruse it. This code can be found in the
+expectation_max.py file and can be tested by appending em to the command line arguments.
+
+```
+%probably_interesting_data> python main.py data/<dataset csv file> <categorical column> <data column 1> <data column 2> em
+```
